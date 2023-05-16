@@ -13,9 +13,7 @@ session = Session(bind=engine)
 async def hello():
     return {"message":"Hello world"}
 
-@router.post("/signup",
-    status_code=status.HTTP_201_CREATED
-)
+@router.post("/signup")
 async def signup(user:SignUpModel):
     registered_email = session.query(User).filter(User.email==user.email).first()
 
@@ -51,6 +49,11 @@ async def signup(user:SignUpModel):
 
     session.commit()
 
-    return new_user
+    return JSONResponse(
+            status_code=status.HTTP_201_CREATED,
+            content={
+                "message": f"{new_user.username} is created."
+            }
+        )
 
 
