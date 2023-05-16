@@ -1,5 +1,6 @@
 from pydantic import BaseModel
 from typing import Optional
+from dynaconf import settings
 
 class SignUpModel(BaseModel):
     id: Optional[int]
@@ -20,3 +21,10 @@ class SignUpModel(BaseModel):
                 "is_staff": False,
             }
         }
+
+class Settings(BaseModel):
+    secret_key: str = "secret"
+
+class LoginModel(BaseModel):
+    username: str
+    password: str        

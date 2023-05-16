@@ -1,7 +1,7 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import declarative_base, sessionmaker
-
-engine = create_engine("postgresql://postgres:root@localhost/pizza_delivery", echo=True)
+from dynaconf import settings
+engine = create_engine(settings.POSTGRE_SQL_URL, echo=True)
 
 Base = declarative_base()
 Session = sessionmaker()
