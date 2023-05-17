@@ -6,7 +6,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from starlette import status
 from fastapi.responses import JSONResponse
 from fastapi_jwt_auth import AuthJWT
-from fastapi.encoders import jsonable_encoder
+from fastapi.exceptions import HTTPException
 from dynaconf import settings
 
 router = APIRouter()
@@ -17,8 +17,16 @@ authjwt_secret_key = settings.get("auth.authjwt_secret_key")
 AuthJWT.secret_key = authjwt_secret_key
 
 @router.get("/")
-async def hello():
-    return {"message":"Hello world"}
+async def hello(Authorize:AuthJWT = Depends()):
+    try:
+        Authorize.jwt_required()
+
+    except Exception as e:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid Token"
+        )
+
+    return {"message":"Hello World"}
 
 @router.post("/signup")
 async def signup(user:SignUpModel):
@@ -70,10 +78,6 @@ async def login(user:LoginModel, Authorize:AuthJWT = Depends()):
         access_token = Authorize.create_access_token(subject=db_user.username)
         refresh_token = Authorize.create_refresh_token(subject=db_user.username)
         
-        response = {
-          "access_token": access_token,
-          "refresh_token": refresh_token
-        }
         return JSONResponse(
             status_code=status.HTTP_200_OK,
             content={
@@ -86,5 +90,25 @@ async def login(user:LoginModel, Authorize:AuthJWT = Depends()):
             status_code=status.HTTP_401_UNAUTHORIZED,
             content={
                 "message": "Invalid username or password"
+            }
+        )
+
+@router.get('/refresh')
+async def refresh_token(Authorize:AuthJWT=Depends()):
+    try:
+        Authorize.jwt_refresh_token_required()
+
+    except Exception:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Please provide a valid refresh token"
+        ) 
+
+    current_user=Authorize.get_jwt_subject()
+    access_token = Authorize.create_access_token(subject=current_user)
+
+    return JSONResponse(
+            status_code = status.HTTP_200_OK,
+            content = {
+                "access_token": access_token
             }
         )
