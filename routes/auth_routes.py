@@ -12,10 +12,6 @@ from dynaconf import settings
 router = APIRouter()
 session = Session(bind=engine)
 
-authjwt_secret_key = settings.get("auth.authjwt_secret_key")
-
-AuthJWT.secret_key = authjwt_secret_key
-
 @router.get("/")
 async def hello(Authorize:AuthJWT = Depends()):
     try:
