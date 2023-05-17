@@ -1,3 +1,3 @@
 [default]
 POSTGRE_SQL_URL = "postgresql://postgres:root@localhost/pizza_delivery"
-authjwt_secret_key = "8e36a4dbff099935cfb8bf950b37c09816387d6fc2ce0f3085610b33486f4007"
+AUTHJWT_SECRET_KEY = "8e36a4dbff099935cfb8bf950b37c09816387d6fc2ce0f3085610b33486f4007"

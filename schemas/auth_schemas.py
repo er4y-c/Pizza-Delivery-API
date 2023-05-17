@@ -23,7 +23,7 @@ class SignUpModel(BaseModel):
         }
 
 class Settings(BaseModel):
-    secret_key: str = "secret"
+    authjwt_secret_key: str = settings.AUTHJWT_SECRET_KEY
 
 class LoginModel(BaseModel):
     username: str

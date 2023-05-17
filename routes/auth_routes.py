@@ -77,7 +77,8 @@ async def login(user:LoginModel, Authorize:AuthJWT = Depends()):
         return JSONResponse(
             status_code=status.HTTP_200_OK,
             content={
-                jsonable_encoder(response)
+                "access_token": access_token,
+                "refresh_token": refresh_token
             }
         )
     
