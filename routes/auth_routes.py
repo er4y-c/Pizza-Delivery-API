@@ -8,6 +8,7 @@ from fastapi.responses import JSONResponse
 from fastapi_jwt_auth import AuthJWT
 from fastapi.exceptions import HTTPException
 from dynaconf import settings
+from datetime import timedelta
 
 router = APIRouter()
 session = Session(bind=engine)
@@ -71,8 +72,10 @@ async def signup(user:SignUpModel):
 async def login(user:LoginModel, Authorize:AuthJWT = Depends()):
     db_user = session.query(User).filter(User.username == user.username).first()
     if db_user and check_password_hash(db_user.password, user.password):
-        access_token = Authorize.create_access_token(subject=db_user.username)
-        refresh_token = Authorize.create_refresh_token(subject=db_user.username)
+        access_token_expires = timedelta(minutes=60)
+        refresh_token_expires = timedelta(days=7)
+        access_token = Authorize.create_access_token(subject=db_user.username, expires_time=access_token_expires)
+        refresh_token = Authorize.create_refresh_token(subject=db_user.username, expires_time= refresh_token_expires)
         
         return JSONResponse(
             status_code=status.HTTP_200_OK,

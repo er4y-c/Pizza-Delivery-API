@@ -131,9 +131,9 @@ async def get_specific_order(order_id:int,Authorize:AuthJWT=Depends()):
             detail="Invalid Token"
         )
 
-    subject=Authorize.get_jwt_subject()
+    user=Authorize.get_jwt_subject()
 
-    current_user=session.query(User).filter(User.username==subject).first()
+    current_user=session.query(User).filter(User.username==user).first()
 
     orders=current_user.orders
 
